@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>L2 – Wochentage sortieren</title>
+  <title>L2 – Wochentage (2 Spiele)</title>
 
   <style>
     @font-face{
@@ -19,17 +19,16 @@
       --card:rgba(255,255,255,.92);
       --line:rgba(20,20,30,.14);
       --shadow:0 10px 26px rgba(0,0,0,.14);
+      --radius:22px;
 
       --pink:#ff5aa5;
       --purple:#7b61ff;
       --blue:#3aa0ff;
       --teal:#18c7a5;
-      --lime:#9be15d;
+      --lime:#29d46a;
       --yellow:#ffd54a;
       --orange:#ff8a3d;
       --red:#ff4b4b;
-
-      --radius:22px;
     }
 
     *{ box-sizing:border-box; }
@@ -46,12 +45,12 @@
     }
 
     .wrap{
-      max-width:980px;
+      max-width:1040px;
       margin:0 auto;
-      padding:18px 14px 26px;
+      padding:16px 14px 26px;
     }
 
-    .header{
+    .top{
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -60,29 +59,37 @@
       margin-bottom:12px;
     }
 
-    .title{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:10px 16px;
-      box-shadow:var(--shadow);
-      display:inline-flex;
-      align-items:center;
+    .tabs{
+      display:flex;
       gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
     }
 
-    .title h1{
-      margin:0;
-      font-size:20px;
-      line-height:1;
-      letter-spacing:.2px;
+    .tab{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.90);
+      border-radius:999px;
+      padding:10px 16px;
+      font-size:18px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .05s ease, filter .12s ease, background .12s ease;
+      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .tab:active{ transform:scale(.99); }
+    .tab.active{
+      background:linear-gradient(135deg, var(--teal), var(--blue));
+      color:#fff;
+      border-color:transparent;
     }
 
     .actions{
       display:flex;
       gap:10px;
-      align-items:center;
       flex-wrap:wrap;
+      align-items:center;
     }
 
     .btn{
@@ -90,35 +97,25 @@
       cursor:pointer;
       border-radius:999px;
       padding:10px 16px;
-      font-weight:700;
-      font-size:16px;
-      color:#fff;
+      font-weight:800;
+      font-size:18px;
       box-shadow:0 10px 22px rgba(0,0,0,.15);
       transition:transform .05s ease, filter .12s ease;
       font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     .btn:active{ transform:scale(.99); }
     .btn.secondary{
-      background:rgba(255,255,255,.9);
+      background:rgba(255,255,255,.90);
       color:var(--ink);
       border:1px solid var(--line);
       box-shadow:var(--shadow);
     }
     .btn.secondary:hover{ filter:brightness(.98); }
-
     .btn.primary{
       background:linear-gradient(135deg, var(--teal), var(--blue));
+      color:#fff;
     }
     .btn.primary:hover{ filter:brightness(1.03); }
-
-    .board{
-      display:grid;
-      grid-template-columns: 1fr 1.25fr;
-      gap:14px;
-    }
-    @media (max-width: 860px){
-      .board{ grid-template-columns:1fr; }
-    }
 
     .panel{
       background:var(--card);
@@ -129,12 +126,22 @@
       backdrop-filter: blur(6px);
     }
 
-    .panel h2{
+    .board{
+      display:grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap:14px;
+    }
+    @media (max-width: 860px){
+      .board{ grid-template-columns:1fr; }
+    }
+
+    h2{
       margin:0 0 10px 0;
-      font-size:18px;
+      font-size:20px;
       line-height:1.05;
     }
 
+    /* GAME 1 */
     .audioGrid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -153,10 +160,8 @@
       align-items:center;
       justify-content:center;
       gap:10px;
-      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       box-shadow:0 10px 18px rgba(0,0,0,.12);
       transition:transform .05s ease, filter .12s ease, outline-color .12s ease, opacity .12s ease;
-      color:#111;
       outline:4px solid transparent;
       user-select:none;
       min-height:62px;
@@ -178,10 +183,8 @@
       font-weight:900;
       box-shadow:0 6px 14px rgba(0,0,0,.12);
     }
-
     .speaker{
       width:28px; height:28px;
-      flex:0 0 auto;
       filter: drop-shadow(0 2px 2px rgba(0,0,0,.10));
     }
 
@@ -189,7 +192,6 @@
       display:grid;
       gap:12px;
     }
-
     .slot{
       border-radius:18px;
       border:3px dashed rgba(255,255,255,.85);
@@ -205,18 +207,13 @@
       position:relative;
       overflow:hidden;
     }
-
-    .slot:hover{
-      filter:brightness(1.03);
-    }
+    .slot:hover{ filter:brightness(1.03); }
     .slot:active{ transform:scale(.995); }
-
     .slot.locked{
       border-style:solid;
       background:rgba(255,255,255,.92);
       cursor:default;
     }
-
     .slot.wrong{
       border-color: rgba(255,75,75,.95);
       background:rgba(255,75,75,.18);
@@ -229,12 +226,74 @@
       75%{ transform:translateX(-4px); }
       100%{ transform:translateX(0); }
     }
-
     .word{
-      font-size:20px;
-      font-weight:800;
+      font-size:22px;
+      font-weight:900;
       letter-spacing:.2px;
     }
+
+    /* GAME 2 */
+    .g2Wrap{
+      display:grid;
+      gap:12px;
+    }
+
+    .g2Top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+
+    .pill{
+      background:rgba(255,255,255,.90);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:18px;
+      font-weight:900;
+      box-shadow:var(--shadow);
+    }
+
+    .daysRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:stretch;
+      justify-content:center;
+    }
+
+    .dayCard{
+      flex:1 1 120px;
+      max-width:160px;
+      min-width:120px;
+      border-radius:22px;
+      padding:14px 12px;
+      text-align:center;
+      font-size:22px;
+      font-weight:900;
+      background:#fff;
+      border:4px solid rgba(0,0,0,.08);
+      box-shadow:0 10px 18px rgba(0,0,0,.12);
+      cursor:pointer;
+      user-select:none;
+      transition:transform .05s ease, filter .12s ease, box-shadow .12s ease;
+    }
+    .dayCard:active{ transform:scale(.99); }
+
+    .dayCard.ok{
+      box-shadow:0 0 0 6px rgba(24,199,165,.22), 0 10px 18px rgba(0,0,0,.12);
+      border-color: rgba(24,199,165,.65);
+    }
+    .dayCard.no{
+      border-color: rgba(255,75,75,.75);
+      box-shadow:0 0 0 6px rgba(255,75,75,.18), 0 10px 18px rgba(0,0,0,.12);
+      animation:shake .18s linear 1;
+    }
+
+    .hidden{ display:none !important; }
 
     .sr-only{
       position:absolute;
@@ -249,9 +308,10 @@
 
 <body>
   <div class="wrap">
-    <div class="header">
-      <div class="title">
-        <h1>Wochentage sortieren</h1>
+    <div class="top">
+      <div class="tabs">
+        <button class="tab active" id="tab1" type="button">Spiel 1</button>
+        <button class="tab" id="tab2" type="button">Spiel 2</button>
       </div>
 
       <div class="actions">
@@ -260,16 +320,36 @@
       </div>
     </div>
 
-    <div class="board">
-      <section class="panel" aria-label="Audios">
-        <h2>Hören</h2>
-        <div class="audioGrid" id="audioGrid"></div>
-      </section>
+    <!-- GAME 1 -->
+    <div id="game1">
+      <div class="board">
+        <section class="panel" aria-label="Audios">
+          <h2>Hören</h2>
+          <div class="audioGrid" id="audioGrid"></div>
+        </section>
 
-      <section class="panel" aria-label="Plätze">
-        <h2>Reihenfolge</h2>
-        <div class="slots" id="slots"></div>
-      </section>
+        <section class="panel" aria-label="Plätze">
+          <h2>Reihenfolge</h2>
+          <div class="slots" id="slots"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- GAME 2 -->
+    <div id="game2" class="hidden">
+      <div class="panel">
+        <div class="g2Wrap">
+          <div class="g2Top">
+            <div class="pill" id="g2Progress">1/24</div>
+            <div class="actions">
+              <button class="btn secondary" id="g2Replay" type="button">Noch einmal</button>
+              <button class="btn primary" id="g2Next" type="button">Weiter</button>
+            </div>
+          </div>
+
+          <div class="daysRow" id="daysRow"></div>
+        </div>
+      </div>
     </div>
 
     <audio id="player" preload="auto"></audio>
@@ -277,6 +357,17 @@
 
   <script>
     const RAW = "https://raw.githubusercontent.com/albrechtclaire1007/l2wochentage/main";
+
+    // Wochentag-Farben wie im Bild
+    const dayStyle = {
+      montag:     { border: "rgba(255,90,165,.95)",  bg:"rgba(255,255,255,.95)" }, // pink
+      dienstag:   { border: "rgba(255,138,61,.95)",  bg:"rgba(255,255,255,.95)" }, // orange
+      mittwoch:   { border: "rgba(58,160,255,.95)",  bg:"rgba(255,255,255,.95)" }, // cyan/blue
+      donnerstag: { border: "rgba(255,213,74,.95)",  bg:"rgba(255,255,255,.95)" }, // yellow
+      freitag:    { border: "rgba(58,160,255,.55)",  bg:"rgba(255,255,255,.95)" }, // light blue
+      samstag:    { border: "rgba(41,212,106,.95)",  bg:"rgba(255,255,255,.95)" }, // green
+      sonntag:    { border: "rgba(123,97,255,.75)",  bg:"rgba(255,255,255,.95)" }, // purple
+    };
 
     const days = [
       { id:"montag",     word:"Montag",     audio:`${RAW}/montag.mp3`,     color:"linear-gradient(135deg, var(--yellow), var(--orange))" },
@@ -290,15 +381,32 @@
 
     const correctIdsBySlot = days.map(d => d.id);
 
-    const audioGrid = document.getElementById("audioGrid");
-    const slotsEl = document.getElementById("slots");
     const player = document.getElementById("player");
 
-    let audioOrder = [];
-    let selectedId = null;
-    const lockedSlots = Array(7).fill(false);
-    const placedCorrect = new Set();
+    // Tabs
+    const tab1 = document.getElementById("tab1");
+    const tab2 = document.getElementById("tab2");
+    const game1 = document.getElementById("game1");
+    const game2 = document.getElementById("game2");
 
+    function setActiveGame(n){
+      if(n === 1){
+        tab1.classList.add("active"); tab2.classList.remove("active");
+        game1.classList.remove("hidden"); game2.classList.add("hidden");
+        resetBtn.classList.remove("hidden");
+        checkBtn.classList.remove("hidden");
+      }else{
+        tab2.classList.add("active"); tab1.classList.remove("active");
+        game2.classList.remove("hidden"); game1.classList.add("hidden");
+        resetBtn.classList.remove("hidden");
+        checkBtn.classList.add("hidden");
+      }
+    }
+
+    tab1.addEventListener("click", ()=>setActiveGame(1));
+    tab2.addEventListener("click", ()=>setActiveGame(2));
+
+    // Helpers
     function shuffle(arr){
       const a = [...arr];
       for(let i=a.length-1;i>0;i--){
@@ -307,17 +415,34 @@
       }
       return a;
     }
-
     function byId(id){ return days.find(d => d.id === id); }
 
-    function play(id){
-      const d = byId(id);
-      if(!d) return;
-      player.pause();
-      player.currentTime = 0;
-      player.src = d.audio;
-      player.play().catch(()=>{});
+    function playOnce(src){
+      return new Promise((resolve) => {
+        player.pause();
+        player.currentTime = 0;
+        player.src = src;
+        const done = () => {
+          player.removeEventListener("ended", done);
+          resolve();
+        };
+        player.addEventListener("ended", done);
+        player.play().catch(()=>resolve());
+      });
     }
+
+    // =========================
+    // GAME 1 (Sortieren)
+    // =========================
+    const audioGrid = document.getElementById("audioGrid");
+    const slotsEl = document.getElementById("slots");
+    const resetBtn = document.getElementById("resetBtn");
+    const checkBtn = document.getElementById("checkBtn");
+
+    let audioOrder = [];
+    let selectedId = null;
+    const lockedSlots = Array(7).fill(false);
+    const placedCorrect = new Set();
 
     function renderAudios(){
       audioGrid.innerHTML = "";
@@ -330,8 +455,6 @@
         btn.type = "button";
         btn.className = "audioBtn" + (selected ? " selected" : "") + (done ? " done" : "");
         btn.style.background = d.color;
-        btn.setAttribute("aria-label", "Audio abspielen");
-        btn.disabled = false;
 
         btn.innerHTML = `
           <span class="badge">${idx+1}</span>
@@ -343,8 +466,8 @@
           <span class="sr-only">${d.word}</span>
         `;
 
-        btn.addEventListener("click", () => {
-          play(id);
+        btn.addEventListener("click", async () => {
+          await playOnce(d.audio);
           if(done) return;
           selectedId = (selectedId === id) ? null : id;
           renderAudios();
@@ -407,7 +530,7 @@
       }
     }
 
-    function resetGame(){
+    function resetGame1(){
       selectedId = null;
       placedCorrect.clear();
       for(let i=0;i<7;i++) lockedSlots[i] = false;
@@ -416,16 +539,14 @@
       renderSlots();
     }
 
-    function checkGame(){
+    function checkGame1(){
       const all = lockedSlots.every(Boolean);
       if(all){
-        // kleine visuelle Belohnung: einmal alle Audios abspielen (optional) -> hier nur kurzer "glow" über Slots
         [...slotsEl.children].forEach((slot, idx) => {
           slot.style.boxShadow = "0 0 0 6px rgba(24,199,165,.22), 0 10px 18px rgba(0,0,0,.10)";
           setTimeout(()=>{ slot.style.boxShadow = ""; }, 550 + idx*40);
         });
       }else{
-        // markiere die ersten zwei noch leeren Slots kurz
         let c = 0;
         for(const slot of slotsEl.children){
           const idx = [...slotsEl.children].indexOf(slot);
@@ -437,11 +558,147 @@
       }
     }
 
-    document.getElementById("resetBtn").addEventListener("click", resetGame);
-    document.getElementById("checkBtn").addEventListener("click", checkGame);
+    // =========================
+    // GAME 2 (Heute + Tag + Relation)
+    // =========================
+    const daysRow = document.getElementById("daysRow");
+    const g2Progress = document.getElementById("g2Progress");
+    const g2Replay = document.getElementById("g2Replay");
+    const g2Next = document.getElementById("g2Next");
 
-    resetGame();
+    const phrases = {
+      heute_ist:       `${RAW}/heute_ist.mp3`,
+      gestern_war:     `${RAW}/gestern_war.mp3`,
+      vorgestern_war:  `${RAW}/vorgestern_war.mp3`,
+      morgen_ist:      `${RAW}/morgen_ist.mp3`,
+      ubermorgen_ist:  `${RAW}/ubermorgen_ist.mp3`,
+    };
+
+    const relationList = [
+      { key:"gestern_war",    delta:-1 },
+      { key:"vorgestern_war", delta:-2 },
+      { key:"morgen_ist",     delta:+1 },
+      { key:"ubermorgen_ist", delta:+2 },
+    ];
+
+    let examples = [];
+    let exIndex = 0;
+    let targetId = null;
+    let clickingEnabled = false;
+
+    function mod(n,m){ return ((n % m) + m) % m; }
+
+    function buildExamples24(){
+      const all = [];
+      for(let today=0; today<7; today++){
+        for(const rel of relationList){
+          all.push({ todayIndex: today, relKey: rel.key, delta: rel.delta });
+        }
+      }
+      return shuffle(all).slice(0,24);
+    }
+
+    function renderGame2Cards(){
+      daysRow.innerHTML = "";
+      days.forEach(d => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "dayCard";
+        card.textContent = d.word;
+        card.style.borderColor = dayStyle[d.id]?.border || "rgba(0,0,0,.10)";
+        card.style.background = dayStyle[d.id]?.bg || "#fff";
+
+        card.addEventListener("click", () => {
+          if(!clickingEnabled) return;
+          if(d.id === targetId){
+            clickingEnabled = false;
+            card.classList.add("ok");
+            setTimeout(()=>nextExample(), 550);
+          }else{
+            card.classList.add("no");
+            setTimeout(()=>card.classList.remove("no"), 260);
+          }
+        });
+
+        daysRow.appendChild(card);
+      });
+    }
+
+    async function playExampleAudio(ex){
+      clickingEnabled = false;
+
+      const todayDay = days[ex.todayIndex];
+      await playOnce(phrases.heute_ist);
+      await playOnce(todayDay.audio);
+      await playOnce(phrases[ex.relKey]);
+
+      clickingEnabled = true;
+    }
+
+    function computeTarget(ex){
+      const targetIndex = mod(ex.todayIndex + ex.delta, 7);
+      return days[targetIndex].id;
+    }
+
+    function updateProgress(){
+      g2Progress.textContent = `${exIndex+1}/24`;
+    }
+
+    async function loadExample(){
+      const ex = examples[exIndex];
+      targetId = computeTarget(ex);
+      updateProgress();
+      await playExampleAudio(ex);
+    }
+
+    async function nextExample(){
+      exIndex++;
+      if(exIndex >= examples.length){
+        exIndex = examples.length - 1;
+        clickingEnabled = false;
+        [...daysRow.children].forEach((c, idx) => {
+          c.classList.add("ok");
+          setTimeout(()=>c.classList.remove("ok"), 700 + idx*30);
+        });
+        return;
+      }
+      await loadExample();
+    }
+
+    async function replayExample(){
+      const ex = examples[exIndex];
+      await playExampleAudio(ex);
+    }
+
+    function resetGame2(){
+      examples = buildExamples24();
+      exIndex = 0;
+      targetId = null;
+      clickingEnabled = false;
+      renderGame2Cards();
+      loadExample();
+    }
+
+    g2Replay.addEventListener("click", replayExample);
+    g2Next.addEventListener("click", nextExample);
+
+    // Global buttons behavior
+    resetBtn.addEventListener("click", () => {
+      if(!game1.classList.contains("hidden")){
+        resetGame1();
+      }else{
+        resetGame2();
+      }
+    });
+
+    checkBtn.addEventListener("click", checkGame1);
+
+    // Init
+    resetGame1();
+    resetGame2();
+    setActiveGame(1);
   </script>
 </body>
 </html>
+
 

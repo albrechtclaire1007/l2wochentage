@@ -3,99 +3,119 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>L2 – Wochentage sortieren (Audio)</title>
+  <title>L2 – Wochentage sortieren</title>
 
   <style>
+    @font-face{
+      font-family:"DRHand";
+      src:url("https://github.com/albrechtclaire1007/l2wochentage/raw/refs/heads/main/DRHand-Regular.otf") format("opentype");
+      font-weight:400;
+      font-style:normal;
+      font-display:swap;
+    }
+
     :root{
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --ink:#111;
-      --muted:#666;
-      --line:#e5e7ef;
-      --good:#2e7d32;
-      --bad:#c62828;
-      --accent:#1f7a5a;
-      --accent2:#135843;
-      --slot:#f2f4fa;
-      --shadow:0 8px 24px rgba(0,0,0,.08);
-      --radius:18px;
+      --ink:#101114;
+      --card:rgba(255,255,255,.92);
+      --line:rgba(20,20,30,.14);
+      --shadow:0 10px 26px rgba(0,0,0,.14);
+
+      --pink:#ff5aa5;
+      --purple:#7b61ff;
+      --blue:#3aa0ff;
+      --teal:#18c7a5;
+      --lime:#9be15d;
+      --yellow:#ffd54a;
+      --orange:#ff8a3d;
+      --red:#ff4b4b;
+
+      --radius:22px;
     }
 
     *{ box-sizing:border-box; }
+
     body{
       margin:0;
-      background:var(--bg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--ink);
+      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background-image:url("https://i.postimg.cc/B6wMSmcG/Screenshot-2026-01-18-at-16-47-07.png");
+      background-size:cover;
+      background-position:center;
+      background-attachment:fixed;
+      min-height:100vh;
     }
 
     .wrap{
       max-width:980px;
       margin:0 auto;
-      padding:18px 14px 28px;
+      padding:18px 14px 26px;
     }
 
-    .topbar{
+    .header{
       display:flex;
-      gap:10px;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
+      gap:10px;
       flex-wrap:wrap;
       margin-bottom:12px;
     }
 
     .title{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 16px;
+      box-shadow:var(--shadow);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
     }
+
     .title h1{
       margin:0;
-      font-size:18px;
-      line-height:1.2;
-    }
-    .title p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
+      font-size:20px;
+      line-height:1;
+      letter-spacing:.2px;
     }
 
-    .controls{
+    .actions{
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+      gap:10px;
       align-items:center;
-      justify-content:flex-end;
+      flex-wrap:wrap;
     }
 
-    button{
+    .btn{
       border:0;
       cursor:pointer;
       border-radius:999px;
-      padding:10px 14px;
-      font-weight:600;
-      font-size:14px;
-      background:var(--accent);
+      padding:10px 16px;
+      font-weight:700;
+      font-size:16px;
       color:#fff;
-      box-shadow:0 6px 16px rgba(31,122,90,.22);
+      box-shadow:0 10px 22px rgba(0,0,0,.15);
+      transition:transform .05s ease, filter .12s ease;
+      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    button:hover{ background:var(--accent2); }
-    button.secondary{
-      background:#fff;
+    .btn:active{ transform:scale(.99); }
+    .btn.secondary{
+      background:rgba(255,255,255,.9);
       color:var(--ink);
       border:1px solid var(--line);
-      box-shadow:none;
+      box-shadow:var(--shadow);
     }
-    button.secondary:hover{
-      background:#f7f8ff;
+    .btn.secondary:hover{ filter:brightness(.98); }
+
+    .btn.primary{
+      background:linear-gradient(135deg, var(--teal), var(--blue));
     }
+    .btn.primary:hover{ filter:brightness(1.03); }
 
     .board{
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
+      grid-template-columns: 1fr 1.25fr;
+      gap:14px;
     }
-
     @media (max-width: 860px){
       .board{ grid-template-columns:1fr; }
     }
@@ -106,146 +126,114 @@
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:14px;
+      backdrop-filter: blur(6px);
     }
 
     .panel h2{
-      margin:0 0 8px 0;
-      font-size:15px;
-    }
-    .hint{
-      margin:0 0 12px 0;
-      color:var(--muted);
-      font-size:13px;
+      margin:0 0 10px 0;
+      font-size:18px;
+      line-height:1.05;
     }
 
-    /* Tiles (audio cards) */
-    .tiles{
+    .audioGrid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
     }
-    @media (min-width: 520px){
-      .tiles{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 420px){
+      .audioGrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    .tile{
+    .audioBtn{
+      border:0;
+      cursor:pointer;
+      border-radius:20px;
+      padding:14px 10px;
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      justify-content:center;
       gap:10px;
-      padding:12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
+      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      box-shadow:0 10px 18px rgba(0,0,0,.12);
+      transition:transform .05s ease, filter .12s ease, outline-color .12s ease, opacity .12s ease;
+      color:#111;
+      outline:4px solid transparent;
       user-select:none;
-      transition:transform .06s ease, box-shadow .12s ease, border-color .12s ease;
+      min-height:62px;
     }
-
-    .tile:active{ transform:scale(.99); }
-
-    .tile.selected{
-      border-color: rgba(31,122,90,.55);
-      box-shadow:0 0 0 4px rgba(31,122,90,.12);
-    }
-
-    .tile.placed{
-      opacity:.55;
+    .audioBtn:active{ transform:scale(.99); }
+    .audioBtn.selected{ outline-color: rgba(255,255,255,.9); }
+    .audioBtn.done{
+      opacity:.45;
+      cursor:default;
       filter:grayscale(.25);
     }
 
-    .tile .label{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-      min-width:0;
-    }
-    .tile .label b{
-      font-size:14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .tile .label span{
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    .icon{
-      width:40px;
-      height:40px;
-      border-radius:999px;
-      background:#e9fff6;
+    .badge{
+      width:34px; height:34px;
+      border-radius:12px;
+      background:rgba(255,255,255,.92);
       display:grid;
       place-items:center;
-      flex:0 0 auto;
-      border:1px solid rgba(31,122,90,.2);
+      font-weight:900;
+      box-shadow:0 6px 14px rgba(0,0,0,.12);
     }
-    .icon svg{ width:20px; height:20px; }
 
-    /* Slots */
+    .speaker{
+      width:28px; height:28px;
+      flex:0 0 auto;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.10));
+    }
+
     .slots{
       display:grid;
-      gap:10px;
+      gap:12px;
     }
+
     .slot{
+      border-radius:18px;
+      border:3px dashed rgba(255,255,255,.85);
+      background:rgba(255,255,255,.30);
+      min-height:58px;
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:12px;
-      border-radius:16px;
-      border:1px dashed #cfd5ea;
-      background:var(--slot);
-      min-height:54px;
+      justify-content:center;
       cursor:pointer;
-      transition:background .12s ease, border-color .12s ease;
+      user-select:none;
+      box-shadow:0 10px 18px rgba(0,0,0,.10);
+      transition:transform .05s ease, background .12s ease, border-color .12s ease, filter .12s ease;
+      position:relative;
+      overflow:hidden;
     }
+
     .slot:hover{
-      background:#eef1ff;
-      border-color:#b9c2ea;
+      filter:brightness(1.03);
     }
-    .num{
-      width:34px;
-      height:34px;
-      border-radius:12px;
-      background:#fff;
-      border:1px solid var(--line);
-      display:grid;
-      place-items:center;
-      font-weight:800;
-    }
-    .slotText{
-      flex:1 1 auto;
-      font-weight:700;
-      font-size:14px;
-      color:#1a1a1a;
-    }
-    .slotSub{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:600;
-      margin-top:2px;
-    }
+    .slot:active{ transform:scale(.995); }
 
-    .slot.filled{
+    .slot.locked{
       border-style:solid;
-      background:#fff;
+      background:rgba(255,255,255,.92);
+      cursor:default;
     }
 
-    .status{
-      margin-top:10px;
-      font-size:14px;
-      font-weight:700;
-      min-height:22px;
+    .slot.wrong{
+      border-color: rgba(255,75,75,.95);
+      background:rgba(255,75,75,.18);
+      animation:shake .18s linear 1;
     }
-    .status.good{ color:var(--good); }
-    .status.bad{ color:var(--bad); }
+    @keyframes shake{
+      0%{ transform:translateX(0); }
+      25%{ transform:translateX(-6px); }
+      50%{ transform:translateX(6px); }
+      75%{ transform:translateX(-4px); }
+      100%{ transform:translateX(0); }
+    }
 
-    .tiny{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:8px;
-      line-height:1.35;
+    .word{
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:.2px;
     }
 
     .sr-only{
@@ -261,39 +249,26 @@
 
 <body>
   <div class="wrap">
-    <div class="topbar">
+    <div class="header">
       <div class="title">
-        <h1>Wochentage sortieren (Audio)</h1>
-        <p>1) Höre die Audios. 2) Setze sie in die richtige Reihenfolge. 3) Prüfen.</p>
+        <h1>Wochentage sortieren</h1>
       </div>
 
-      <div class="controls">
-        <button class="secondary" id="shuffleBtn" type="button">Neu mischen</button>
-        <button class="secondary" id="clearBtn" type="button">Zurücksetzen</button>
-        <button id="checkBtn" type="button">Prüfen</button>
+      <div class="actions">
+        <button class="btn secondary" id="resetBtn" type="button">Neu starten</button>
+        <button class="btn primary" id="checkBtn" type="button">Prüfen</button>
       </div>
     </div>
 
     <div class="board">
-      <!-- Left: tiles -->
-      <section class="panel" aria-label="Audio-Kacheln">
-        <h2>Audio-Kacheln</h2>
-        <p class="hint">Tippe eine Kachel, um den Wochentag zu hören. Tippe dann auf einen Platz rechts.</p>
-        <div class="tiles" id="tiles"></div>
-        <p class="tiny">
-          Tipp: Auf iPad/Handy ist „Tippen zum Platzieren“ zuverlässiger als Drag & Drop.
-        </p>
+      <section class="panel" aria-label="Audios">
+        <h2>Hören</h2>
+        <div class="audioGrid" id="audioGrid"></div>
       </section>
 
-      <!-- Right: slots -->
-      <section class="panel" aria-label="Reihenfolge">
-        <h2>Reihenfolge (1–7)</h2>
-        <p class="hint">Tippe auf einen Platz, um die ausgewählte Kachel dort einzusetzen.</p>
-
+      <section class="panel" aria-label="Plätze">
+        <h2>Reihenfolge</h2>
         <div class="slots" id="slots"></div>
-
-        <div id="status" class="status" aria-live="polite"></div>
-        <div class="tiny" id="progress"></div>
       </section>
     </div>
 
@@ -301,30 +276,28 @@
   </div>
 
   <script>
-    // === AUDIO SOURCE (dein Repo) ===
     const RAW = "https://raw.githubusercontent.com/albrechtclaire1007/l2wochentage/main";
 
-    // Soll-Reihenfolge:
-    const correctOrder = [
-      { id:"montag",      label:"Montag",      audio:`${RAW}/montag.mp3` },
-      { id:"dienstag",    label:"Dienstag",    audio:`${RAW}/dienstag.mp3` },
-      { id:"mittwoch",    label:"Mittwoch",    audio:`${RAW}/mittwoch.mp3` },
-      { id:"donnerstag",  label:"Donnerstag",  audio:`${RAW}/donnerstag.mp3` },
-      { id:"freitag",     label:"Freitag",     audio:`${RAW}/freitag.mp3` },
-      { id:"samstag",     label:"Samstag",     audio:`${RAW}/samstag.mp3` },
-      { id:"sonntag",     label:"Sonntag",     audio:`${RAW}/sonntag.mp3` },
+    const days = [
+      { id:"montag",     word:"Montag",     audio:`${RAW}/montag.mp3`,     color:"linear-gradient(135deg, var(--yellow), var(--orange))" },
+      { id:"dienstag",   word:"Dienstag",   audio:`${RAW}/dienstag.mp3`,   color:"linear-gradient(135deg, var(--pink), var(--purple))" },
+      { id:"mittwoch",   word:"Mittwoch",   audio:`${RAW}/mittwoch.mp3`,   color:"linear-gradient(135deg, var(--blue), var(--teal))" },
+      { id:"donnerstag", word:"Donnerstag", audio:`${RAW}/donnerstag.mp3`, color:"linear-gradient(135deg, var(--purple), var(--blue))" },
+      { id:"freitag",    word:"Freitag",    audio:`${RAW}/freitag.mp3`,    color:"linear-gradient(135deg, var(--teal), var(--lime))" },
+      { id:"samstag",    word:"Samstag",    audio:`${RAW}/samstag.mp3`,    color:"linear-gradient(135deg, var(--orange), var(--pink))" },
+      { id:"sonntag",    word:"Sonntag",    audio:`${RAW}/sonntag.mp3`,    color:"linear-gradient(135deg, var(--lime), var(--yellow))" },
     ];
 
-    // Spielzustand
-    let tilesData = [];               // gemischte Kacheln
-    let selectedId = null;            // aktuell ausgewählte Kachel
-    const placedBySlot = Array(7).fill(null); // slot -> id
+    const correctIdsBySlot = days.map(d => d.id);
 
-    const elTiles = document.getElementById("tiles");
-    const elSlots = document.getElementById("slots");
-    const elStatus = document.getElementById("status");
-    const elProgress = document.getElementById("progress");
+    const audioGrid = document.getElementById("audioGrid");
+    const slotsEl = document.getElementById("slots");
     const player = document.getElementById("player");
+
+    let audioOrder = [];
+    let selectedId = null;
+    const lockedSlots = Array(7).fill(false);
+    const placedCorrect = new Set();
 
     function shuffle(arr){
       const a = [...arr];
@@ -335,202 +308,140 @@
       return a;
     }
 
-    function getById(id){
-      return correctOrder.find(x => x.id === id);
-    }
+    function byId(id){ return days.find(d => d.id === id); }
 
-    function playAudio(id){
-      const item = getById(id);
-      if(!item) return;
+    function play(id){
+      const d = byId(id);
+      if(!d) return;
       player.pause();
       player.currentTime = 0;
-      player.src = item.audio;
-      player.play().catch(()=>{ /* autoplay block -> ok */ });
+      player.src = d.audio;
+      player.play().catch(()=>{});
     }
 
-    function render(){
-      // Tiles
-      elTiles.innerHTML = "";
-      tilesData.forEach(item => {
-        const isPlaced = placedBySlot.includes(item.id);
-        const isSelected = selectedId === item.id;
+    function renderAudios(){
+      audioGrid.innerHTML = "";
+      audioOrder.forEach((id, idx) => {
+        const d = byId(id);
+        const done = placedCorrect.has(id);
+        const selected = selectedId === id;
 
-        const tile = document.createElement("div");
-        tile.className = "tile" + (isSelected ? " selected" : "") + (isPlaced ? " placed" : "");
-        tile.tabIndex = 0;
-        tile.setAttribute("role","button");
-        tile.setAttribute("aria-label", `Audio abspielen: ${item.label}`);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "audioBtn" + (selected ? " selected" : "") + (done ? " done" : "");
+        btn.style.background = d.color;
+        btn.setAttribute("aria-label", "Audio abspielen");
+        btn.disabled = false;
 
-        tile.addEventListener("click", () => {
-          // Kachel auswählen + Audio spielen
-          if(isPlaced){
-            // wenn bereits platziert: trotzdem abspielbar, aber nicht auswählbar
-            playAudio(item.id);
-            flashStatus("Du kannst platzierte Kacheln anhören. Zum Umsetzen: Slot antippen und tauschen.", "bad", 1200);
-            return;
-          }
-          selectedId = item.id;
-          playAudio(item.id);
-          clearStatus();
-          render();
-        });
-
-        tile.addEventListener("keydown", (e)=>{
-          if(e.key === "Enter" || e.key === " "){
-            e.preventDefault();
-            tile.click();
-          }
-        });
-
-        tile.innerHTML = `
-          <div class="label">
-            <b>${item.label}</b>
-            <span>${isPlaced ? "schon eingesetzt" : (isSelected ? "ausgewählt" : "tippen zum Hören")}</span>
-          </div>
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M11 5L6 9H3v6h3l5 4V5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M15.5 8.5a4 4 0 010 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M17.8 6.2a7 7 0 010 11.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+        btn.innerHTML = `
+          <span class="badge">${idx+1}</span>
+          <svg class="speaker" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M11 5L6 9H3v6h3l5 4V5z" stroke="white" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M15.5 8.5a4 4 0 010 7" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M17.8 6.2a7 7 0 010 11.6" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="sr-only">${d.word}</span>
         `;
-        elTiles.appendChild(tile);
-      });
 
-      // Slots
-      elSlots.innerHTML = "";
+        btn.addEventListener("click", () => {
+          play(id);
+          if(done) return;
+          selectedId = (selectedId === id) ? null : id;
+          renderAudios();
+        });
+
+        audioGrid.appendChild(btn);
+      });
+    }
+
+    function renderSlots(){
+      slotsEl.innerHTML = "";
       for(let i=0;i<7;i++){
         const slot = document.createElement("div");
-        const idInSlot = placedBySlot[i];
-        const filled = Boolean(idInSlot);
-
-        slot.className = "slot" + (filled ? " filled" : "");
+        slot.className = "slot" + (lockedSlots[i] ? " locked" : "");
         slot.setAttribute("role","button");
         slot.tabIndex = 0;
 
-        slot.addEventListener("click", () => onSlotClick(i));
-        slot.addEventListener("keydown", (e)=>{
+        const correctId = correctIdsBySlot[i];
+        const correctWord = byId(correctId).word;
+
+        const wordDiv = document.createElement("div");
+        wordDiv.className = "word";
+        wordDiv.textContent = lockedSlots[i] ? correctWord : "";
+        slot.appendChild(wordDiv);
+
+        slot.addEventListener("click", () => onSlotClick(i, slot));
+        slot.addEventListener("keydown", (e) => {
           if(e.key === "Enter" || e.key === " "){
             e.preventDefault();
-            slot.click();
+            onSlotClick(i, slot);
           }
         });
 
-        let text = filled ? getById(idInSlot).label : "Platz frei";
-        let sub  = filled ? "tippen zum Anhören / Tauschen" : "Tippe, um die ausgewählte Kachel einzusetzen";
-
-        slot.innerHTML = `
-          <div class="num">${i+1}</div>
-          <div>
-            <div class="slotText">${text}</div>
-            <span class="slotSub">${sub}</span>
-          </div>
-        `;
-        elSlots.appendChild(slot);
+        slotsEl.appendChild(slot);
       }
-
-      // Progress
-      const placedCount = placedBySlot.filter(Boolean).length;
-      elProgress.textContent = `Eingesetzt: ${placedCount}/7`;
     }
 
-    function onSlotClick(slotIndex){
-      const idInSlot = placedBySlot[slotIndex];
+    function flashWrong(slotEl){
+      slotEl.classList.remove("wrong");
+      void slotEl.offsetWidth;
+      slotEl.classList.add("wrong");
+      setTimeout(()=>slotEl.classList.remove("wrong"), 220);
+    }
 
-      // Wenn Slot belegt und nichts ausgewählt -> Audio abspielen
-      if(idInSlot && !selectedId){
-        playAudio(idInSlot);
-        clearStatus();
-        return;
-      }
+    function onSlotClick(i, slotEl){
+      if(lockedSlots[i]) return;
+      if(!selectedId) return;
 
-      // Wenn nichts ausgewählt und Slot leer -> Hinweis
-      if(!selectedId && !idInSlot){
-        flashStatus("Tippe zuerst links eine Audio-Kachel an.", "bad", 1200);
-        return;
-      }
-
-      // Wenn ausgewählt -> einsetzen / tauschen
-      if(selectedId){
-        // Wenn ausgewählte Kachel irgendwo anders schon liegt -> verhindern (sollte durch UI kaum passieren)
-        const alreadySlot = placedBySlot.indexOf(selectedId);
-        if(alreadySlot !== -1){
-          flashStatus("Diese Kachel ist schon eingesetzt. Tippe sie links nicht an – nutze Tauschen über Slot.", "bad", 1400);
-          selectedId = null;
-          render();
-          return;
-        }
-
-        // Tauschen, falls Slot belegt
-        if(idInSlot){
-          // setze ausgewählte in Slot, nimm alte raus (wird wieder frei)
-          placedBySlot[slotIndex] = selectedId;
-          // die alte kommt zurück in den Pool (einfach: bleibt als nicht-placed verfügbar)
-          selectedId = null;
-          clearStatus();
-          render();
-          return;
-        }
-
-        // Slot leer -> einfach einsetzen
-        placedBySlot[slotIndex] = selectedId;
+      const needed = correctIdsBySlot[i];
+      if(selectedId === needed){
+        lockedSlots[i] = true;
+        placedCorrect.add(selectedId);
         selectedId = null;
-        clearStatus();
-        render();
-      }
-    }
-
-    function clearAll(){
-      for(let i=0;i<7;i++) placedBySlot[i] = null;
-      selectedId = null;
-      clearStatus();
-      render();
-    }
-
-    function reshuffle(){
-      clearAll();
-      tilesData = shuffle(correctOrder);
-      render();
-    }
-
-    function clearStatus(){
-      elStatus.textContent = "";
-      elStatus.className = "status";
-    }
-
-    function flashStatus(msg, type="bad", ms=1200){
-      elStatus.textContent = msg;
-      elStatus.className = "status " + (type === "good" ? "good" : "bad");
-      window.clearTimeout(flashStatus._t);
-      flashStatus._t = window.setTimeout(clearStatus, ms);
-    }
-
-    function check(){
-      const placedCount = placedBySlot.filter(Boolean).length;
-      if(placedCount < 7){
-        flashStatus("Setze zuerst alle 7 Wochentage ein.", "bad", 1400);
-        return;
-      }
-
-      const ok = placedBySlot.every((id, idx) => id === correctOrder[idx].id);
-
-      if(ok){
-        elStatus.textContent = "✅ Super! Alles richtig sortiert!";
-        elStatus.className = "status good";
+        renderSlots();
+        renderAudios();
       }else{
-        elStatus.textContent = "❌ Noch nicht ganz. Korrigiere die Reihenfolge und prüfe noch einmal.";
-        elStatus.className = "status bad";
+        flashWrong(slotEl);
+        selectedId = null;
+        renderAudios();
       }
     }
 
-    document.getElementById("checkBtn").addEventListener("click", check);
-    document.getElementById("clearBtn").addEventListener("click", clearAll);
-    document.getElementById("shuffleBtn").addEventListener("click", reshuffle);
+    function resetGame(){
+      selectedId = null;
+      placedCorrect.clear();
+      for(let i=0;i<7;i++) lockedSlots[i] = false;
+      audioOrder = shuffle(days.map(d => d.id));
+      renderAudios();
+      renderSlots();
+    }
 
-    // Init
-    tilesData = shuffle(correctOrder);
-    render();
+    function checkGame(){
+      const all = lockedSlots.every(Boolean);
+      if(all){
+        // kleine visuelle Belohnung: einmal alle Audios abspielen (optional) -> hier nur kurzer "glow" über Slots
+        [...slotsEl.children].forEach((slot, idx) => {
+          slot.style.boxShadow = "0 0 0 6px rgba(24,199,165,.22), 0 10px 18px rgba(0,0,0,.10)";
+          setTimeout(()=>{ slot.style.boxShadow = ""; }, 550 + idx*40);
+        });
+      }else{
+        // markiere die ersten zwei noch leeren Slots kurz
+        let c = 0;
+        for(const slot of slotsEl.children){
+          const idx = [...slotsEl.children].indexOf(slot);
+          if(!lockedSlots[idx] && c < 2){
+            flashWrong(slot);
+            c++;
+          }
+        }
+      }
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", resetGame);
+    document.getElementById("checkBtn").addEventListener("click", checkGame);
+
+    resetGame();
   </script>
 </body>
 </html>
+

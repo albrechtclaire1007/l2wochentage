@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>L2 – Wochentage sortieren (Audio)</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --ink:#111;
+      --muted:#666;
+      --line:#e5e7ef;
+      --good:#2e7d32;
+      --bad:#c62828;
+      --accent:#1f7a5a;
+      --accent2:#135843;
+      --slot:#f2f4fa;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+    }
+
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 14px 28px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .title h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+    .title p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .controls{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      border-radius:999px;
+      padding:10px 14px;
+      font-weight:600;
+      font-size:14px;
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 6px 16px rgba(31,122,90,.22);
+    }
+    button:hover{ background:var(--accent2); }
+    button.secondary{
+      background:#fff;
+      color:var(--ink);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    button.secondary:hover{
+      background:#f7f8ff;
+    }
+
+    .board{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width: 860px){
+      .board{ grid-template-columns:1fr; }
+    }
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+
+    .panel h2{
+      margin:0 0 8px 0;
+      font-size:15px;
+    }
+    .hint{
+      margin:0 0 12px 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Tiles (audio cards) */
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+    @media (min-width: 520px){
+      .tiles{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    .tile{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      user-select:none;
+      transition:transform .06s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .tile:active{ transform:scale(.99); }
+
+    .tile.selected{
+      border-color: rgba(31,122,90,.55);
+      box-shadow:0 0 0 4px rgba(31,122,90,.12);
+    }
+
+    .tile.placed{
+      opacity:.55;
+      filter:grayscale(.25);
+    }
+
+    .tile .label{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      min-width:0;
+    }
+    .tile .label b{
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tile .label span{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .icon{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background:#e9fff6;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      border:1px solid rgba(31,122,90,.2);
+    }
+    .icon svg{ width:20px; height:20px; }
+
+    /* Slots */
+    .slots{
+      display:grid;
+      gap:10px;
+    }
+    .slot{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px;
+      border-radius:16px;
+      border:1px dashed #cfd5ea;
+      background:var(--slot);
+      min-height:54px;
+      cursor:pointer;
+      transition:background .12s ease, border-color .12s ease;
+    }
+    .slot:hover{
+      background:#eef1ff;
+      border-color:#b9c2ea;
+    }
+    .num{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid var(--line);
+      display:grid;
+      place-items:center;
+      font-weight:800;
+    }
+    .slotText{
+      flex:1 1 auto;
+      font-weight:700;
+      font-size:14px;
+      color:#1a1a1a;
+    }
+    .slotSub{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+      margin-top:2px;
+    }
+
+    .slot.filled{
+      border-style:solid;
+      background:#fff;
+    }
+
+    .status{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:700;
+      min-height:22px;
+    }
+    .status.good{ color:var(--good); }
+    .status.bad{ color:var(--bad); }
+
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.35;
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;height:1px;
+      padding:0;margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;border:0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h1>Wochentage sortieren (Audio)</h1>
+        <p>1) Höre die Audios. 2) Setze sie in die richtige Reihenfolge. 3) Prüfen.</p>
+      </div>
+
+      <div class="controls">
+        <button class="secondary" id="shuffleBtn" type="button">Neu mischen</button>
+        <button class="secondary" id="clearBtn" type="button">Zurücksetzen</button>
+        <button id="checkBtn" type="button">Prüfen</button>
+      </div>
+    </div>
+
+    <div class="board">
+      <!-- Left: tiles -->
+      <section class="panel" aria-label="Audio-Kacheln">
+        <h2>Audio-Kacheln</h2>
+        <p class="hint">Tippe eine Kachel, um den Wochentag zu hören. Tippe dann auf einen Platz rechts.</p>
+        <div class="tiles" id="tiles"></div>
+        <p class="tiny">
+          Tipp: Auf iPad/Handy ist „Tippen zum Platzieren“ zuverlässiger als Drag & Drop.
+        </p>
+      </section>
+
+      <!-- Right: slots -->
+      <section class="panel" aria-label="Reihenfolge">
+        <h2>Reihenfolge (1–7)</h2>
+        <p class="hint">Tippe auf einen Platz, um die ausgewählte Kachel dort einzusetzen.</p>
+
+        <div class="slots" id="slots"></div>
+
+        <div id="status" class="status" aria-live="polite"></div>
+        <div class="tiny" id="progress"></div>
+      </section>
+    </div>
+
+    <audio id="player" preload="auto"></audio>
+  </div>
+
+  <script>
+    // === AUDIO SOURCE (dein Repo) ===
+    const RAW = "https://raw.githubusercontent.com/albrechtclaire1007/l2wochentage/main";
+
+    // Soll-Reihenfolge:
+    const correctOrder = [
+      { id:"montag",      label:"Montag",      audio:`${RAW}/montag.mp3` },
+      { id:"dienstag",    label:"Dienstag",    audio:`${RAW}/dienstag.mp3` },
+      { id:"mittwoch",    label:"Mittwoch",    audio:`${RAW}/mittwoch.mp3` },
+      { id:"donnerstag",  label:"Donnerstag",  audio:`${RAW}/donnerstag.mp3` },
+      { id:"freitag",     label:"Freitag",     audio:`${RAW}/freitag.mp3` },
+      { id:"samstag",     label:"Samstag",     audio:`${RAW}/samstag.mp3` },
+      { id:"sonntag",     label:"Sonntag",     audio:`${RAW}/sonntag.mp3` },
+    ];
+
+    // Spielzustand
+    let tilesData = [];               // gemischte Kacheln
+    let selectedId = null;            // aktuell ausgewählte Kachel
+    const placedBySlot = Array(7).fill(null); // slot -> id
+
+    const elTiles = document.getElementById("tiles");
+    const elSlots = document.getElementById("slots");
+    const elStatus = document.getElementById("status");
+    const elProgress = document.getElementById("progress");
+    const player = document.getElementById("player");
+
+    function shuffle(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+
+    function getById(id){
+      return correctOrder.find(x => x.id === id);
+    }
+
+    function playAudio(id){
+      const item = getById(id);
+      if(!item) return;
+      player.pause();
+      player.currentTime = 0;
+      player.src = item.audio;
+      player.play().catch(()=>{ /* autoplay block -> ok */ });
+    }
+
+    function render(){
+      // Tiles
+      elTiles.innerHTML = "";
+      tilesData.forEach(item => {
+        const isPlaced = placedBySlot.includes(item.id);
+        const isSelected = selectedId === item.id;
+
+        const tile = document.createElement("div");
+        tile.className = "tile" + (isSelected ? " selected" : "") + (isPlaced ? " placed" : "");
+        tile.tabIndex = 0;
+        tile.setAttribute("role","button");
+        tile.setAttribute("aria-label", `Audio abspielen: ${item.label}`);
+
+        tile.addEventListener("click", () => {
+          // Kachel auswählen + Audio spielen
+          if(isPlaced){
+            // wenn bereits platziert: trotzdem abspielbar, aber nicht auswählbar
+            playAudio(item.id);
+            flashStatus("Du kannst platzierte Kacheln anhören. Zum Umsetzen: Slot antippen und tauschen.", "bad", 1200);
+            return;
+          }
+          selectedId = item.id;
+          playAudio(item.id);
+          clearStatus();
+          render();
+        });
+
+        tile.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            tile.click();
+          }
+        });
+
+        tile.innerHTML = `
+          <div class="label">
+            <b>${item.label}</b>
+            <span>${isPlaced ? "schon eingesetzt" : (isSelected ? "ausgewählt" : "tippen zum Hören")}</span>
+          </div>
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M11 5L6 9H3v6h3l5 4V5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M15.5 8.5a4 4 0 010 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17.8 6.2a7 7 0 010 11.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        `;
+        elTiles.appendChild(tile);
+      });
+
+      // Slots
+      elSlots.innerHTML = "";
+      for(let i=0;i<7;i++){
+        const slot = document.createElement("div");
+        const idInSlot = placedBySlot[i];
+        const filled = Boolean(idInSlot);
+
+        slot.className = "slot" + (filled ? " filled" : "");
+        slot.setAttribute("role","button");
+        slot.tabIndex = 0;
+
+        slot.addEventListener("click", () => onSlotClick(i));
+        slot.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            slot.click();
+          }
+        });
+
+        let text = filled ? getById(idInSlot).label : "Platz frei";
+        let sub  = filled ? "tippen zum Anhören / Tauschen" : "Tippe, um die ausgewählte Kachel einzusetzen";
+
+        slot.innerHTML = `
+          <div class="num">${i+1}</div>
+          <div>
+            <div class="slotText">${text}</div>
+            <span class="slotSub">${sub}</span>
+          </div>
+        `;
+        elSlots.appendChild(slot);
+      }
+
+      // Progress
+      const placedCount = placedBySlot.filter(Boolean).length;
+      elProgress.textContent = `Eingesetzt: ${placedCount}/7`;
+    }
+
+    function onSlotClick(slotIndex){
+      const idInSlot = placedBySlot[slotIndex];
+
+      // Wenn Slot belegt und nichts ausgewählt -> Audio abspielen
+      if(idInSlot && !selectedId){
+        playAudio(idInSlot);
+        clearStatus();
+        return;
+      }
+
+      // Wenn nichts ausgewählt und Slot leer -> Hinweis
+      if(!selectedId && !idInSlot){
+        flashStatus("Tippe zuerst links eine Audio-Kachel an.", "bad", 1200);
+        return;
+      }
+
+      // Wenn ausgewählt -> einsetzen / tauschen
+      if(selectedId){
+        // Wenn ausgewählte Kachel irgendwo anders schon liegt -> verhindern (sollte durch UI kaum passieren)
+        const alreadySlot = placedBySlot.indexOf(selectedId);
+        if(alreadySlot !== -1){
+          flashStatus("Diese Kachel ist schon eingesetzt. Tippe sie links nicht an – nutze Tauschen über Slot.", "bad", 1400);
+          selectedId = null;
+          render();
+          return;
+        }
+
+        // Tauschen, falls Slot belegt
+        if(idInSlot){
+          // setze ausgewählte in Slot, nimm alte raus (wird wieder frei)
+          placedBySlot[slotIndex] = selectedId;
+          // die alte kommt zurück in den Pool (einfach: bleibt als nicht-placed verfügbar)
+          selectedId = null;
+          clearStatus();
+          render();
+          return;
+        }
+
+        // Slot leer -> einfach einsetzen
+        placedBySlot[slotIndex] = selectedId;
+        selectedId = null;
+        clearStatus();
+        render();
+      }
+    }
+
+    function clearAll(){
+      for(let i=0;i<7;i++) placedBySlot[i] = null;
+      selectedId = null;
+      clearStatus();
+      render();
+    }
+
+    function reshuffle(){
+      clearAll();
+      tilesData = shuffle(correctOrder);
+      render();
+    }
+
+    function clearStatus(){
+      elStatus.textContent = "";
+      elStatus.className = "status";
+    }
+
+    function flashStatus(msg, type="bad", ms=1200){
+      elStatus.textContent = msg;
+      elStatus.className = "status " + (type === "good" ? "good" : "bad");
+      window.clearTimeout(flashStatus._t);
+      flashStatus._t = window.setTimeout(clearStatus, ms);
+    }
+
+    function check(){
+      const placedCount = placedBySlot.filter(Boolean).length;
+      if(placedCount < 7){
+        flashStatus("Setze zuerst alle 7 Wochentage ein.", "bad", 1400);
+        return;
+      }
+
+      const ok = placedBySlot.every((id, idx) => id === correctOrder[idx].id);
+
+      if(ok){
+        elStatus.textContent = "✅ Super! Alles richtig sortiert!";
+        elStatus.className = "status good";
+      }else{
+        elStatus.textContent = "❌ Noch nicht ganz. Korrigiere die Reihenfolge und prüfe noch einmal.";
+        elStatus.className = "status bad";
+      }
+    }
+
+    document.getElementById("checkBtn").addEventListener("click", check);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
+    document.getElementById("shuffleBtn").addEventListener("click", reshuffle);
+
+    // Init
+    tilesData = shuffle(correctOrder);
+    render();
+  </script>
+</body>
+</html>

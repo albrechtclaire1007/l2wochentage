@@ -37,11 +37,19 @@
       margin:0;
       color:var(--ink);
       font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight:400;
       background-image:url("https://i.postimg.cc/B6wMSmcG/Screenshot-2026-01-18-at-16-47-07.png");
       background-size:cover;
       background-position:center;
       background-attachment:fixed;
       min-height:100vh;
+    }
+
+    /* Force DRHand everywhere (and regular weight) */
+    .drhand{
+      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+      font-weight:400 !important;
+      letter-spacing:0.2px;
     }
 
     .wrap{
@@ -75,11 +83,9 @@
       border-radius:999px;
       padding:10px 16px;
       font-size:18px;
-      font-weight:800;
       cursor:pointer;
       box-shadow:var(--shadow);
       transition:transform .05s ease, filter .12s ease, background .12s ease;
-      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     .tab:active{ transform:scale(.99); }
     .tab.active{
@@ -100,11 +106,9 @@
       cursor:pointer;
       border-radius:999px;
       padding:10px 16px;
-      font-weight:800;
       font-size:18px;
       box-shadow:0 10px 22px rgba(0,0,0,.15);
       transition:transform .05s ease, filter .12s ease;
-      font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       display:inline-flex;
       align-items:center;
       gap:10px;
@@ -186,8 +190,9 @@
       background:rgba(255,255,255,.92);
       display:grid;
       place-items:center;
-      font-weight:900;
       box-shadow:0 6px 14px rgba(0,0,0,.12);
+      font-size:18px;
+      line-height:1;
     }
     .speaker{
       width:28px; height:28px;
@@ -237,14 +242,13 @@
     }
 
     .word{
-      font-size:clamp(18px, 2.6vw, 26px);
-      font-weight:900;
-      letter-spacing:.2px;
+      font-size:clamp(20px, 2.8vw, 30px);
       line-height:1.05;
       width:100%;
       display:block;
       word-break:keep-all;
       overflow-wrap:anywhere;
+      text-shadow:0 1px 0 rgba(255,255,255,.65);
     }
 
     /* GAME 2 */
@@ -252,7 +256,7 @@
       min-height: calc(100vh - 120px);
       display:flex;
       flex-direction:column;
-      justify-content:flex-end; /* pushes exercise box down */
+      justify-content:flex-end;
       gap:12px;
     }
 
@@ -275,7 +279,6 @@
       border-radius:999px;
       padding:8px 14px;
       font-size:18px;
-      font-weight:900;
       box-shadow:var(--shadow);
     }
 
@@ -293,10 +296,10 @@
     }
 
     .sayText{
-      font-size:clamp(18px, 2.4vw, 26px);
-      font-weight:900;
+      font-size:clamp(20px, 2.6vw, 30px);
       line-height:1.05;
       overflow-wrap:anywhere;
+      text-shadow:0 1px 0 rgba(255,255,255,.65);
     }
 
     .listenBtn{
@@ -314,10 +317,7 @@
     .listenBtn:active{ transform:scale(.99); }
     .listenBtn:hover{ filter:brightness(1.03); }
 
-    .listenBtn svg{
-      width:24px;
-      height:24px;
-    }
+    .listenBtn svg{ width:24px; height:24px; }
 
     .daysRow{
       display:flex;
@@ -334,8 +334,7 @@
       border-radius:22px;
       padding:14px 12px;
       text-align:center;
-      font-size:clamp(18px, 2.4vw, 26px);
-      font-weight:900;
+      font-size:clamp(20px, 2.6vw, 30px);
       background:#fff;
       border:4px solid rgba(0,0,0,.08);
       box-shadow:0 10px 18px rgba(0,0,0,.12);
@@ -344,6 +343,7 @@
       transition:transform .05s ease, filter .12s ease, box-shadow .12s ease;
       line-height:1.05;
       overflow-wrap:anywhere;
+      text-shadow:0 1px 0 rgba(255,255,255,.65);
     }
     .dayCard:active{ transform:scale(.99); }
 
@@ -374,13 +374,13 @@
   <div class="wrap">
     <div class="top">
       <div class="tabs">
-        <button class="tab active" id="tab1" type="button">Spiel 1</button>
-        <button class="tab" id="tab2" type="button">Spiel 2</button>
+        <button class="tab drhand active" id="tab1" type="button">Spiel 1</button>
+        <button class="tab drhand" id="tab2" type="button">Spiel 2</button>
       </div>
 
       <div class="actions">
-        <button class="btn secondary" id="resetBtn" type="button">Neu starten</button>
-        <button class="btn primary" id="checkBtn" type="button">Prüfen</button>
+        <button class="btn drhand secondary" id="resetBtn" type="button">Neu starten</button>
+        <button class="btn drhand primary" id="checkBtn" type="button">Prüfen</button>
       </div>
     </div>
 
@@ -388,12 +388,12 @@
     <div id="game1">
       <div class="board">
         <section class="panel" aria-label="Audios">
-          <h2>Hören</h2>
+          <h2 class="drhand">Hören</h2>
           <div class="audioGrid" id="audioGrid"></div>
         </section>
 
         <section class="panel" aria-label="Plätze">
-          <h2>Reihenfolge</h2>
+          <h2 class="drhand">Reihenfolge</h2>
           <div class="slots" id="slots"></div>
         </section>
       </div>
@@ -404,7 +404,7 @@
       <div class="g2Shell">
         <div class="panel g2Exercise">
           <div class="g2Top">
-            <div class="pill" id="g2Progress">1/24</div>
+            <div class="pill drhand" id="g2Progress">1/24</div>
             <div class="actions">
               <button class="listenBtn" id="g2Replay" type="button" aria-label="Noch einmal">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -413,12 +413,12 @@
                   <path d="M17.8 6.2a7 7 0 010 11.6" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
                 </svg>
               </button>
-              <button class="btn primary" id="g2Next" type="button">Weiter</button>
+              <button class="btn drhand primary" id="g2Next" type="button">Weiter</button>
             </div>
           </div>
 
           <div class="sayBox">
-            <div class="sayText" id="g2SayText">Heute ist …</div>
+            <div class="sayText drhand" id="g2SayText">Heute ist …</div>
           </div>
 
           <div class="daysRow" id="daysRow"></div>
@@ -522,9 +522,10 @@
         btn.type = "button";
         btn.className = "audioBtn" + (selected ? " selected" : "") + (done ? " done" : "");
         btn.style.background = d.color;
+        btn.classList.add("drhand");
 
         btn.innerHTML = `
-          <span class="badge">${idx+1}</span>
+          <span class="badge drhand">${idx+1}</span>
           <svg class="speaker" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M11 5L6 9H3v6h3l5 4V5z" stroke="white" stroke-width="2.2" stroke-linejoin="round"/>
             <path d="M15.5 8.5a4 4 0 010 7" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
@@ -548,7 +549,7 @@
       slotsEl.innerHTML = "";
       for(let i=0;i<7;i++){
         const slot = document.createElement("div");
-        slot.className = "slot" + (lockedSlots[i] ? " locked" : "");
+        slot.className = "slot drhand" + (lockedSlots[i] ? " locked" : "");
         slot.setAttribute("role","button");
         slot.tabIndex = 0;
 
@@ -556,7 +557,7 @@
         const correctWord = byId(correctId).word;
 
         const wordDiv = document.createElement("div");
-        wordDiv.className = "word";
+        wordDiv.className = "word drhand";
         wordDiv.textContent = lockedSlots[i] ? correctWord : "";
         slot.appendChild(wordDiv);
 
@@ -669,7 +670,7 @@
       days.forEach(d => {
         const card = document.createElement("button");
         card.type = "button";
-        card.className = "dayCard";
+        card.className = "dayCard drhand";
         card.textContent = d.word;
 
         card.style.borderColor = dayStyle[d.id]?.border || "rgba(0,0,0,.10)";

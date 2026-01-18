@@ -47,7 +47,11 @@
     .wrap{
       max-width:1040px;
       margin:0 auto;
-      padding:16px 14px 26px;
+      padding:14px 14px 28px;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
     }
 
     .top{
@@ -56,7 +60,6 @@
       justify-content:space-between;
       gap:10px;
       flex-wrap:wrap;
-      margin-bottom:12px;
     }
 
     .tabs{
@@ -102,6 +105,9 @@
       box-shadow:0 10px 22px rgba(0,0,0,.15);
       transition:transform .05s ease, filter .12s ease;
       font-family:"DRHand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
     }
     .btn:active{ transform:scale(.99); }
     .btn.secondary{
@@ -126,6 +132,13 @@
       backdrop-filter: blur(6px);
     }
 
+    h2{
+      margin:0 0 10px 0;
+      font-size:20px;
+      line-height:1.05;
+    }
+
+    /* GAME 1 */
     .board{
       display:grid;
       grid-template-columns: 1fr 1.15fr;
@@ -135,13 +148,6 @@
       .board{ grid-template-columns:1fr; }
     }
 
-    h2{
-      margin:0 0 10px 0;
-      font-size:20px;
-      line-height:1.05;
-    }
-
-    /* GAME 1 */
     .audioGrid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -206,6 +212,8 @@
       transition:transform .05s ease, background .12s ease, border-color .12s ease, filter .12s ease;
       position:relative;
       overflow:hidden;
+      padding:10px 12px;
+      text-align:center;
     }
     .slot:hover{ filter:brightness(1.03); }
     .slot:active{ transform:scale(.995); }
@@ -219,6 +227,7 @@
       background:rgba(255,75,75,.18);
       animation:shake .18s linear 1;
     }
+
     @keyframes shake{
       0%{ transform:translateX(0); }
       25%{ transform:translateX(-6px); }
@@ -226,16 +235,29 @@
       75%{ transform:translateX(-4px); }
       100%{ transform:translateX(0); }
     }
+
     .word{
-      font-size:22px;
+      font-size:clamp(18px, 2.6vw, 26px);
       font-weight:900;
       letter-spacing:.2px;
+      line-height:1.05;
+      width:100%;
+      display:block;
+      word-break:keep-all;
+      overflow-wrap:anywhere;
     }
 
     /* GAME 2 */
-    .g2Wrap{
-      display:grid;
+    .g2Shell{
+      min-height: calc(100vh - 120px);
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end; /* pushes exercise box down */
       gap:12px;
+    }
+
+    .g2Exercise{
+      padding:16px;
     }
 
     .g2Top{
@@ -244,7 +266,7 @@
       justify-content:space-between;
       gap:10px;
       flex-wrap:wrap;
-      margin-bottom:8px;
+      margin-bottom:10px;
     }
 
     .pill{
@@ -257,6 +279,46 @@
       box-shadow:var(--shadow);
     }
 
+    .sayBox{
+      background:rgba(255,255,255,.90);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin:6px 0 12px;
+    }
+
+    .sayText{
+      font-size:clamp(18px, 2.4vw, 26px);
+      font-weight:900;
+      line-height:1.05;
+      overflow-wrap:anywhere;
+    }
+
+    .listenBtn{
+      border:0;
+      cursor:pointer;
+      border-radius:16px;
+      padding:10px 12px;
+      background:linear-gradient(135deg, var(--yellow), var(--orange));
+      box-shadow:0 10px 18px rgba(0,0,0,.12);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .05s ease, filter .12s ease;
+    }
+    .listenBtn:active{ transform:scale(.99); }
+    .listenBtn:hover{ filter:brightness(1.03); }
+
+    .listenBtn svg{
+      width:24px;
+      height:24px;
+    }
+
     .daysRow{
       display:flex;
       gap:10px;
@@ -266,13 +328,13 @@
     }
 
     .dayCard{
-      flex:1 1 120px;
-      max-width:160px;
-      min-width:120px;
+      flex:1 1 130px;
+      max-width:180px;
+      min-width:130px;
       border-radius:22px;
       padding:14px 12px;
       text-align:center;
-      font-size:22px;
+      font-size:clamp(18px, 2.4vw, 26px);
       font-weight:900;
       background:#fff;
       border:4px solid rgba(0,0,0,.08);
@@ -280,6 +342,8 @@
       cursor:pointer;
       user-select:none;
       transition:transform .05s ease, filter .12s ease, box-shadow .12s ease;
+      line-height:1.05;
+      overflow-wrap:anywhere;
     }
     .dayCard:active{ transform:scale(.99); }
 
@@ -337,14 +401,24 @@
 
     <!-- GAME 2 -->
     <div id="game2" class="hidden">
-      <div class="panel">
-        <div class="g2Wrap">
+      <div class="g2Shell">
+        <div class="panel g2Exercise">
           <div class="g2Top">
             <div class="pill" id="g2Progress">1/24</div>
             <div class="actions">
-              <button class="btn secondary" id="g2Replay" type="button">Noch einmal</button>
+              <button class="listenBtn" id="g2Replay" type="button" aria-label="Noch einmal">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M11 5L6 9H3v6h3l5 4V5z" stroke="white" stroke-width="2.4" stroke-linejoin="round"/>
+                  <path d="M15.5 8.5a4 4 0 010 7" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M17.8 6.2a7 7 0 010 11.6" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+              </button>
               <button class="btn primary" id="g2Next" type="button">Weiter</button>
             </div>
+          </div>
+
+          <div class="sayBox">
+            <div class="sayText" id="g2SayText">Heute ist …</div>
           </div>
 
           <div class="daysRow" id="daysRow"></div>
@@ -358,15 +432,14 @@
   <script>
     const RAW = "https://raw.githubusercontent.com/albrechtclaire1007/l2wochentage/main";
 
-    // Wochentag-Farben wie im Bild
     const dayStyle = {
-      montag:     { border: "rgba(255,90,165,.95)",  bg:"rgba(255,255,255,.95)" }, // pink
-      dienstag:   { border: "rgba(255,138,61,.95)",  bg:"rgba(255,255,255,.95)" }, // orange
-      mittwoch:   { border: "rgba(58,160,255,.95)",  bg:"rgba(255,255,255,.95)" }, // cyan/blue
-      donnerstag: { border: "rgba(255,213,74,.95)",  bg:"rgba(255,255,255,.95)" }, // yellow
-      freitag:    { border: "rgba(58,160,255,.55)",  bg:"rgba(255,255,255,.95)" }, // light blue
-      samstag:    { border: "rgba(41,212,106,.95)",  bg:"rgba(255,255,255,.95)" }, // green
-      sonntag:    { border: "rgba(123,97,255,.75)",  bg:"rgba(255,255,255,.95)" }, // purple
+      mittwoch:   { border: "rgba(58,160,255,.95)", bg:"rgba(255,255,255,.95)" },
+      montag:     { border: "rgba(255,90,165,.95)", bg:"rgba(255,255,255,.95)" },
+      dienstag:   { border: "rgba(255,138,61,.95)", bg:"rgba(255,255,255,.95)" },
+      freitag:    { border: "rgba(58,160,255,.55)", bg:"rgba(255,255,255,.95)" },
+      samstag:    { border: "rgba(41,212,106,.95)", bg:"rgba(255,255,255,.95)" },
+      donnerstag: { border: "rgba(255,213,74,.95)", bg:"rgba(255,255,255,.95)" },
+      sonntag:    { border: "rgba(123,97,255,.75)", bg:"rgba(255,255,255,.95)" },
     };
 
     const days = [
@@ -383,30 +456,28 @@
 
     const player = document.getElementById("player");
 
-    // Tabs
     const tab1 = document.getElementById("tab1");
     const tab2 = document.getElementById("tab2");
     const game1 = document.getElementById("game1");
     const game2 = document.getElementById("game2");
 
+    const resetBtn = document.getElementById("resetBtn");
+    const checkBtn = document.getElementById("checkBtn");
+
     function setActiveGame(n){
       if(n === 1){
         tab1.classList.add("active"); tab2.classList.remove("active");
         game1.classList.remove("hidden"); game2.classList.add("hidden");
-        resetBtn.classList.remove("hidden");
         checkBtn.classList.remove("hidden");
       }else{
         tab2.classList.add("active"); tab1.classList.remove("active");
         game2.classList.remove("hidden"); game1.classList.add("hidden");
-        resetBtn.classList.remove("hidden");
         checkBtn.classList.add("hidden");
       }
     }
-
     tab1.addEventListener("click", ()=>setActiveGame(1));
     tab2.addEventListener("click", ()=>setActiveGame(2));
 
-    // Helpers
     function shuffle(arr){
       const a = [...arr];
       for(let i=a.length-1;i>0;i--){
@@ -431,13 +502,9 @@
       });
     }
 
-    // =========================
-    // GAME 1 (Sortieren)
-    // =========================
+    // GAME 1
     const audioGrid = document.getElementById("audioGrid");
     const slotsEl = document.getElementById("slots");
-    const resetBtn = document.getElementById("resetBtn");
-    const checkBtn = document.getElementById("checkBtn");
 
     let audioOrder = [];
     let selectedId = null;
@@ -505,11 +572,11 @@
       }
     }
 
-    function flashWrong(slotEl){
-      slotEl.classList.remove("wrong");
-      void slotEl.offsetWidth;
-      slotEl.classList.add("wrong");
-      setTimeout(()=>slotEl.classList.remove("wrong"), 220);
+    function flashWrong(el){
+      el.classList.remove("wrong");
+      void el.offsetWidth;
+      el.classList.add("wrong");
+      setTimeout(()=>el.classList.remove("wrong"), 220);
     }
 
     function onSlotClick(i, slotEl){
@@ -558,13 +625,12 @@
       }
     }
 
-    // =========================
-    // GAME 2 (Heute + Tag + Relation)
-    // =========================
+    // GAME 2
     const daysRow = document.getElementById("daysRow");
     const g2Progress = document.getElementById("g2Progress");
     const g2Replay = document.getElementById("g2Replay");
     const g2Next = document.getElementById("g2Next");
+    const g2SayText = document.getElementById("g2SayText");
 
     const phrases = {
       heute_ist:       `${RAW}/heute_ist.mp3`,
@@ -575,10 +641,10 @@
     };
 
     const relationList = [
-      { key:"gestern_war",    delta:-1 },
-      { key:"vorgestern_war", delta:-2 },
-      { key:"morgen_ist",     delta:+1 },
-      { key:"ubermorgen_ist", delta:+2 },
+      { key:"gestern_war",    delta:-1, text:"Gestern war" },
+      { key:"vorgestern_war", delta:-2, text:"Vorgestern war" },
+      { key:"morgen_ist",     delta:+1, text:"Morgen ist" },
+      { key:"ubermorgen_ist", delta:+2, text:"Übermorgen ist" },
     ];
 
     let examples = [];
@@ -592,7 +658,7 @@
       const all = [];
       for(let today=0; today<7; today++){
         for(const rel of relationList){
-          all.push({ todayIndex: today, relKey: rel.key, delta: rel.delta });
+          all.push({ todayIndex: today, relKey: rel.key, delta: rel.delta, relText: rel.text });
         }
       }
       return shuffle(all).slice(0,24);
@@ -605,6 +671,7 @@
         card.type = "button";
         card.className = "dayCard";
         card.textContent = d.word;
+
         card.style.borderColor = dayStyle[d.id]?.border || "rgba(0,0,0,.10)";
         card.style.background = dayStyle[d.id]?.bg || "#fff";
 
@@ -613,7 +680,7 @@
           if(d.id === targetId){
             clickingEnabled = false;
             card.classList.add("ok");
-            setTimeout(()=>nextExample(), 550);
+            setTimeout(()=>nextExample(), 500);
           }else{
             card.classList.add("no");
             setTimeout(()=>card.classList.remove("no"), 260);
@@ -624,8 +691,14 @@
       });
     }
 
+    function updateSayText(ex){
+      const todayWord = days[ex.todayIndex].word;
+      g2SayText.textContent = `Heute ist ${todayWord}. ${ex.relText} …`;
+    }
+
     async function playExampleAudio(ex){
       clickingEnabled = false;
+      updateSayText(ex);
 
       const todayDay = days[ex.todayIndex];
       await playOnce(phrases.heute_ist);
@@ -682,7 +755,6 @@
     g2Replay.addEventListener("click", replayExample);
     g2Next.addEventListener("click", nextExample);
 
-    // Global buttons behavior
     resetBtn.addEventListener("click", () => {
       if(!game1.classList.contains("hidden")){
         resetGame1();
@@ -700,5 +772,4 @@
   </script>
 </body>
 </html>
-
 
